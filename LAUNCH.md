@@ -42,6 +42,12 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 
 **Third-party requests:** none. Every page loads only same-origin files (checked in CI and in the audit).
 
+### Hosted CI (15 Nov)
+- `b8d1d86`: run [43709906647](https://github.com/anchordigi-gif/anchoriq-website/actions/runs/43709906647) **failed** in one step. The opposite-mode round trip opened the forms without publishing the policy pages, and the new gate rejected it, which is correct.
+- Fixed in `4f09f8f` (publish first, then open). Run [43710316163](https://github.com/anchordigi-gif/anchoriq-website/actions/runs/43710316163): **success** on `4f09f8fa4db009a388402377ea6563c3c6c1d131` (site, stack 36/36, secrets).
+- This note is a docs-only commit after that. Its own run is recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
+- **Not deployed:** the site is not published, VPS, DNS, MX, GTM and billing are unchanged, and app.anchoriq.io and staging are still private.
+
 ### Release blocker: `support.js` redistribution is not confirmed
 `support.js` is the page runtime that the design tool generated ("dc-runtime"). Every page needs it. The file has no licence header, and no published export or redistribution terms were found for it. An unofficial MIT reimplementation exists, but it has no maintenance record, so it does not pass a dependency review. **Do not deploy publicly until one of these is done:**
 1. **Owner confirms** that the design tool's terms allow publishing its exported runtime with the site. Record the source (terms page or written confirmation) here and in `THIRD-PARTY-NOTICES.txt`.
