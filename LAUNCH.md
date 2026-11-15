@@ -32,6 +32,22 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
   - the static check fails on any `on…=` value that is not a `{{binding}}` (checked with a planted `onclick="alert(1)"`);
   - the browser check ignores only these placeholder messages and fails on every other console error or CSP violation.
 
+## GitHub and CI result (16 Nov)
+- **Repository:** `anchordigi-gif/anchoriq-website`, verified **private**, owned by anchordigi-gif (personal account).
+- **What was pushed:** a clean single-commit history, `main` = **`b994c4aa26c338a270eb2f676d232d9387aea9ee`**, whose file tree is identical to local `9694b57`. The local development history (8 commits) stays local only.
+- **Checked before the push:** that exact commit had no credentials (gitleaks), no enquiry data or credential files, and none of the 24 superseded assets.
+  - Flagged for a follow-up PR: `README.txt` is the original ZIP's notes (it mentions unpkg and GTM-FVTFCL67). It is not served, and contains no secret.
+- **CI run:** https://github.com/anchordigi-gif/anchoriq-website/actions/runs/43704649120 (event `push`, head SHA `b994c4a…`), **success**.
+  - **`site`:**
+    - 13 unit tests;
+    - static checks (15 pages, 614 links, 312 asset references, 14 sitemap URLs);
+    - browser checks in open mode (28 page views, pricing, demo, waitlist and homepage forms, 3 emails delivered to the Mailpit test server);
+    - the closed-mode round trip (28 page views, no forms, server 503).
+  - **`stack`:** 36/36 Docker checks.
+  - **`secrets`:** no leaks in history or tree; no data or credential files tracked.
+  - **Not used in CI:** SMTP credentials and the real mailbox.
+- **Deployable commit:** `deploy/release.sh` accepts `b994c4a` only once the policy fields are filled; it will refuse until then.
+
 ## CI and releases
 - **Workflow:** `.github/workflows/verify.yml` runs on pull requests and on pushes to main, with no secrets.
   - **`site`:**
