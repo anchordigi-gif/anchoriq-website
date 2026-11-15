@@ -74,11 +74,14 @@ def markdown(title, page, data):
         out += [f'## {h[:2]}. {h[2:]}', ''] + [p + '\n' for p in paras]
     return '\n'.join(out)
 
+def where(p):
+    return p if os.path.exists(p) else f'legal/drafts/{p}'   # unpublished drafts live in legal/drafts/
+
 if __name__ == '__main__':
-    apply('Privacy.dc.html', PRIVACY)
-    apply('Terms.dc.html', TERMS)
+    apply(where('Privacy.dc.html'), PRIVACY)
+    apply(where('Terms.dc.html'), TERMS)
     os.makedirs('legal', exist_ok=True)
-    open('legal/privacy-draft.md', 'w').write(markdown('Privacy Policy', 'Privacy.dc.html', PRIVACY))
-    open('legal/terms-draft.md', 'w').write(markdown('Terms of Service', 'Terms.dc.html', TERMS))
+    open('legal/privacy-draft.md', 'w').write(markdown('Privacy Policy', where('Privacy.dc.html'), PRIVACY))
+    open('legal/terms-draft.md', 'w').write(markdown('Terms of Service', where('Terms.dc.html'), TERMS))
     fields = sorted(set(re.findall(r'\[[A-Z][A-Z ]+\]|\[CONFIRM:[^\]]+\]', ' '.join(p for d in (PRIVACY, TERMS) for k, v in d.items() if k != 'intro' for p in v))))
     print('\n'.join(fields))

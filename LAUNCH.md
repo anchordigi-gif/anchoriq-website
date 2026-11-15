@@ -4,7 +4,50 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 **Local preview:** `PORT=8200 STATIC_DIR=. node server/forms.mjs`, then http://127.0.0.1:8200/. The site and the forms are served from one origin with the production CSP.
 **Final local QA:** 15 November 2026, on the commit recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
 
-## Forms-enabled release (16 Nov), supersedes the marketing-only release
+## Marketing-only public release (15 Nov 2026), supersedes the forms-enabled release below
+**Why:** the Privacy and Terms pages still have unfinished fields, so the forms stay closed and the drafts are off the public site.
+- **Forms closed in both places:** `assets/site-config.js` says closed (`tools/enquiries-mode.py closed`), and `FORMS_OPEN: '0'` in `deploy/compose.yaml` (every POST answers 503, nothing stored). The stack test checks that the release Compose file ships closed.
+- **Policy drafts unpublished:** `python3 tools/policy-pages.py unpublish` moved `Privacy.dc.html` and `Terms.dc.html` to `legal/drafts/`. That path is not served: nginx allows top-level pages only, and `/legal/...` answers 404. It also removed the footer links, the form sentences and the two sitemap entries. `legal/drafts/policy-links.json` records what was removed. Once the bracketed fields are filled, `python3 tools/policy-pages.py publish` restores all of it exactly; that round trip was tested on a copy. `tools/legal-drafts.py` still writes the drafts in either place.
+- **Release gate:** `ci-site-check --release` now reads policy fields only from published pages. It fails if any page links to an unpublished policy, and it fails if enquiries are open without a published Privacy page. To open the forms later: fill the fields, `policy-pages.py publish`, `enquiries-mode.py open`, `FORMS_OPEN: '1'`.
+
+### Audit (4 viewports: 1440, 1024, 768, 390; axe-core 4.10.3, Playwright 1.64.1, local preview with the production CSP)
+**Fixed (all pages; the design is unchanged):**
+- **Video:** the homepage film had no playback controls. The runtime dropped the empty `controls` attribute; it is now `controls="controls"`.
+- **Diagrams:** the 8 sideways-scrolling diagrams (Executive, App, Marketing, Sales, Integrations, Listings, Platform, Teams) could not be reached by keyboard. They are now focusable labelled regions with a visible focus ring.
+- **Form fields:** they had no visible keyboard focus (outline none). They now get a 2px ring on `:focus-visible` only.
+- **Touch targets (touch screens only, `pointer: coarse`):** the header button is 44px. Nav, footer, phone, tab and period links have larger invisible hit areas, verified with `elementFromPoint` just outside each box. Mouse layouts are unchanged.
+- **Phone link in the closed-forms notice:** it is now underlined. It was distinguishable from the surrounding text by colour alone (2.5:1).
+- **Notices:** added `assets/THIRD-PARTY-NOTICES.txt`, covering three.js r160 (MIT), anime.js 4.5.0 (MIT), React and React DOM 18.3.1 (MIT) and Inter (OFL 1.1), with the MIT text.
+- **Before-and-after screenshots:** video, footer, tablet header and tablet diagram, kept with the session's QA files. They are not committed.
+
+**Passed with no change needed:**
+- no layout shift above 0.05, no console errors, no horizontal overflow, no broken images, one h1 per page;
+- skip link and visible focus on every Tab stop;
+- mobile menu: Enter opens, Escape closes and returns focus, rapid taps;
+- pricing toggle: Space, and 30 rapid clicks end on the last choice;
+- calculator, with rapid plan changes and arrow keys;
+- FAQs and gallery under rapid clicks;
+- reduced motion: all text visible, no infinite animations, canvases static.
+
+**Prices verified:**
+- Starter AED 499/month or AED 4,990/year;
+- Professional AED 1,499/month or AED 14,990/year;
+- Enterprise from AED 3,999/month or AED 39,990/year;
+- onboarding AED 5,000 for Starter and AED 8,000 for Professional;
+- seat rates and connection allowances: `ci-site-check` and the browser check.
+
+**Not issues:**
+- the hero figcaption contrast result is measured mid-fade; the final colour #9A9CA5 is about 7.4:1;
+- the CTA test flags "Sales and leads", which is a page link, not a call to action.
+
+**Third-party requests:** none. Every page loads only same-origin files (checked in CI and in the audit).
+
+### Release blocker: `support.js` redistribution is not confirmed
+`support.js` is the page runtime that the design tool generated ("dc-runtime"). Every page needs it. The file has no licence header, and no published export or redistribution terms were found for it. An unofficial MIT reimplementation exists, but it has no maintenance record, so it does not pass a dependency review. **Do not deploy publicly until one of these is done:**
+1. **Owner confirms** that the design tool's terms allow publishing its exported runtime with the site. Record the source (terms page or written confirmation) here and in `THIRD-PARTY-NOTICES.txt`.
+2. **Or replace the runtime:** precompile the pages to plain HTML and JS so `support.js` is no longer shipped. This is a larger change and needs a full visual regression check against the approved design.
+
+## Forms-enabled release (16 Nov), now superseded by the marketing-only release above
 - **What changed:** demo requests and 7-day trial waitlist signups are open. They are saved, then emailed to hello@anchordigi.com. The release commit is recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
 - **Browser:** `assets/site-config.js` says open. Labels: "Book a demo", "Join the 7-day trial waitlist", "Talk to sales".
 - **Server:** `FORMS_OPEN: '1'` in `deploy/compose.yaml`. `forms` is on `[internal, egress]` for SMTP only.
@@ -127,7 +170,7 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 - **Tests:** 13 unit tests, including a fake SMTP server, header injection and STARTTLS required; the CI browser check against Mailpit.
 
 ## Privacy and Terms (drafts; exact text in `legal/privacy-draft.md` and `legal/terms-draft.md`, single source `tools/legal-drafts.py`)
-**Unfinished: must be completed before publishing (the pages show these brackets publicly today).** Fields to fill: `[COMPANY LEGAL NAME]`, `[REGISTERED ADDRESS]`, `[REGISTRATION NUMBER]`, `[CONTACT EMAIL]`, `[RESPONSE TIME]`, `[EFFECTIVE DATE]`.
+**Unfinished: must be completed before publishing. The pages are unpublished (`legal/drafts/`) until then.** Fields to fill: `[COMPANY LEGAL NAME]`, `[REGISTERED ADDRESS]`, `[REGISTRATION NUMBER]`, `[CONTACT EMAIL]`, `[RESPONSE TIME]`, `[EFFECTIVE DATE]`.
 
 **To confirm:**
 - the Hostinger contracting entity and data terms (the Mumbai hosting is stated);

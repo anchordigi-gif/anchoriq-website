@@ -37,9 +37,9 @@ services:
       PORT: '8300'
       DB_PATH: /home/node/enquiries.sqlite
       TRUST_PROXY: '1'
-      # Enquiries open: demo requests and waitlist signups are saved and emailed. To close them again set '0' and
-      # run tools/enquiries-mode.py closed (keep both the same).
-      FORMS_OPEN: '1'
+      # Marketing-only release: submissions closed (every POST answers 503, nothing stored) while the policies are
+      # unfinished. To open: FORMS_OPEN '1' plus tools/enquiries-mode.py open and tools/policy-pages.py publish.
+      FORMS_OPEN: '0'
     # Email notifications to hello@anchordigi.com: ./secrets/smtp.env (root, 600; never in Git) holds SMTP_HOST,
     # SMTP_PORT, SMTP_USER, SMTP_PASS, NOTIFY_FROM and NOTIFY_TO. Compose reads it as root at start-up and passes it
     # only to this container. Without the file, notifications are off and enquiries are still saved. See deploy/README.md.

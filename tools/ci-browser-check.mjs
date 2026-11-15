@@ -10,8 +10,9 @@ const BASE = process.env.BASE_URL || 'http://127.0.0.1:8300';
 const MAILPIT = process.env.MAILPIT_URL || '';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const OPEN = /AIQ_ENQUIRIES_OPEN = true/.test(readFileSync('assets/site-config.js', 'utf8'));
-const PAGES = ['index.html', 'Platform.dc.html', 'Sales.dc.html', 'Marketing.dc.html', 'Teams.dc.html', 'Listings.dc.html', 'Executive.dc.html',
-  'Solutions.dc.html', 'Pricing.dc.html', 'Integrations.dc.html', 'App.dc.html', 'About.dc.html', 'Privacy.dc.html', 'Terms.dc.html'];
+import { readdirSync } from 'node:fs';
+// every published page (Main.dc.html is a copy of index.html); unpublished policy drafts live in legal/drafts/
+const PAGES = readdirSync('.').filter((f) => f.endsWith('.html') && f !== 'Main.dc.html').sort();
 const fails = [];
 const ok = (cond, msg) => { if (!cond) fails.push(msg); };
 const browser = await chromium.launch(process.env.CHROME_CHANNEL ? { channel: process.env.CHROME_CHANNEL } : {});

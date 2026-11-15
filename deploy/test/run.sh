@@ -16,7 +16,7 @@ ok=0; bad=0
 check() { if [ "$2" = "$3" ]; then ok=$((ok+1)); echo "pass  $1"; else bad=$((bad+1)); echo "FAIL  $1: expected $3, got $2"; fi; }
 H="--resolve anchoriq.io:9443:127.0.0.1 --resolve www.anchoriq.io:9443:127.0.0.1 --resolve app.anchoriq.io:9443:127.0.0.1 --cacert $C/fullchain.pem -s"
 code() { curl $H -o /dev/null -w '%{http_code}' "$@"; }
-check "release compose ships open" "$(env CERT_EMAIL=x@example.test docker compose -f compose.yaml config 2>/dev/null | grep -c "FORMS_OPEN: \"1\"")" 1
+check "release compose ships closed" "$(env CERT_EMAIL=x@example.test docker compose -f compose.yaml config 2>/dev/null | grep -c "FORMS_OPEN: \"0\"")" 1
 check "home page"                  "$(code https://anchoriq.io:9443/)" 200
 check "a page"                     "$(code https://anchoriq.io:9443/Pricing.dc.html)" 200
 check "asset"                      "$(code https://anchoriq.io:9443/assets/vendor/react.production.min.js)" 200

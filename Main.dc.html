@@ -20,6 +20,9 @@
 <link href="assets/fonts/inter.css" rel="stylesheet">
 <style>
 body{margin:0}
+.fx input:focus-visible,.fx select:focus-visible,.fx textarea:focus-visible{outline:2px solid #F4F5F7!important;outline-offset:2px}
+[data-scroll-region]:focus-visible{outline:2px solid #F4F5F7;outline-offset:3px}
+@media (pointer:coarse){nav[aria-label="Main"] a.btn{min-height:44px!important}.nav-links a.nl,footer a.nl,a.nl[href^="tel:"],.tab[role="tab"],[aria-label^="Periods"] button{position:relative}.nav-links a.nl::after{content:"";position:absolute;inset:-11px -8px}footer a.nl::after{content:"";position:absolute;inset:-4px 0}a.nl[href^="tel:"]::after{content:"";position:absolute;inset:-12px -4px}.tab[role="tab"]::after{content:"";position:absolute;inset:0 -3px}[aria-label^="Periods"] button::after{content:"";position:absolute;inset:-2px 0}}
 .tag{display:inline-block;margin-left:8px;padding:1px 8px;border:1px solid #3A3D47;border-radius:999px;font-size:12px;font-weight:500;line-height:18px;color:#C9CBD2;vertical-align:middle;white-space:nowrap;letter-spacing:0}
 a.nl[href="Privacy.dc.html"],a.nl[href="Terms.dc.html"]{display:inline-block;padding:12px 0;margin:-12px 0}
 html{scroll-behavior:smooth}
@@ -172,8 +175,8 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 <a class="nl" href="Pricing.dc.html">Pricing</a>
 <a class="nl" href="About.dc.html">Company</a>
 </div>
-<a href="#pricing" class="btn" style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 14px; font-weight: 600; text-decoration: none">Book a demo</a>
-<details class="mnav"><summary aria-label="Menu"><span></span><span></span><span></span></summary><div class="mpanel"><a href="Platform.dc.html">Platform</a><a href="Solutions.dc.html">Solutions</a><a href="Integrations.dc.html">Integrations</a><a href="App.dc.html">Mobile app</a><a href="Pricing.dc.html">Pricing</a><a href="About.dc.html">Company</a><a href="About.dc.html#contact">Book a demo</a></div></details>
+<a href="#pricing" class="btn" style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 14px; font-weight: 600; text-decoration: none">Demos soon</a>
+<details class="mnav"><summary aria-label="Menu"><span></span><span></span><span></span></summary><div class="mpanel"><a href="Platform.dc.html">Platform</a><a href="Solutions.dc.html">Solutions</a><a href="Integrations.dc.html">Integrations</a><a href="App.dc.html">Mobile app</a><a href="Pricing.dc.html">Pricing</a><a href="About.dc.html">Company</a><a href="About.dc.html#contact">Demos open soon</a></div></details>
 </nav>
 </header>
 
@@ -187,7 +190,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 </h1>
 <p style="margin: 52px 0 0; max-width: 620px; font-size: clamp(19px, 1.6vw, 24px); line-height: 1.45; letter-spacing: -0.01em; color: #9A9CA5">Stop stitching reports together. <span style="color: #F4F5F7">See every lead, every campaign and every team in one place</span>, and know what to do next.</p>
 <div style="margin-top: 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
-<a href="#pricing" class="btn" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 16px; font-weight: 600; text-decoration: none">Book a demo</a>
+<a href="#pricing" class="btn" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 16px; font-weight: 600; text-decoration: none">Demos open soon</a>
 <a href="#journey" class="nl lnk" style="font-size: 16px; font-weight: 500; min-height: 52px; display: inline-flex; align-items: center; gap: 8px; color: #F4F5F7">Explore the platform <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5"></path></svg></a>
 </div>
 </div>
@@ -592,7 +595,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 <div style="position: relative">
 <div aria-hidden="true" style="position: absolute; left: 10%; right: 10%; top: 8%; bottom: -6%; background: radial-gradient(closest-side, rgba(118,52,239,0.12), rgba(36,18,188,0.048) 60%, rgba(10,11,13,0) 100%); pointer-events: none"></div>
 <figure class="sv-rise" style="position: relative; margin: 0; padding: 8px; border-radius: 16px; border: 1px solid rgba(244,245,247,0.12); background: rgba(244,245,247,0.04)">
-<video controls playsinline preload="metadata" poster="assets/demo/product-film-poster.jpg" src="assets/demo/product-film.mp4" aria-label="AnchorIQ product film, thirty seconds, showing the dashboard with sample data" style="display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 10px; background: #0A0B0D"></video>
+<video controls="controls" playsinline="playsinline" preload="metadata" poster="assets/demo/product-film-poster.jpg" src="assets/demo/product-film.mp4" aria-label="AnchorIQ product film, thirty seconds, showing the dashboard with sample data" style="display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 10px; background: #0A0B0D"></video>
 <figcaption style="padding: 18px 8px 8px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 15px"><span style="color: #F4F5F7">AnchorIQ product film</span><span style="color: #9A9CA5">Screens show sample data</span></figcaption>
 </figure>
 </div>
@@ -602,15 +605,15 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 <div class="split" style="align-items: start">
 <div data-rv="1">
 <h2 style="margin: 0; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.12; letter-spacing: -0.025em; font-weight: 500; text-wrap: balance">Flexible plans for businesses of different sizes.</h2>
-<p style="margin: 20px 0 0; font-size: 17px; color: #9A9CA5">Tell us what you need to report on. We will show you AnchorIQ on a call and send a proposal sized to your teams, workspaces and connections.</p>
-<p style="margin: 16px 0 0; font-size: 14px; color: #9A9CA5">We use your details only to respond to this request. See the <a href="Privacy.dc.html" style="color: #C9CBD2; text-underline-offset: 3px">Privacy Policy</a>.</p>
+<p style="margin: 20px 0 0; font-size: 17px; color: #9A9CA5">Once demo requests open, tell us what you need to report on. We will show you AnchorIQ on a call and send a proposal sized to your teams, workspaces and connections.</p>
+<p style="margin: 16px 0 0; font-size: 14px; color: #9A9CA5">We use your details only to respond to this request.</p>
 <ol style="list-style: none; margin: 40px 0 0; padding: 0; display: flex; flex-direction: column; max-width: 520px"><li class="row" style="margin: 0 -8px; padding: 16px 8px; border-top: 1px solid #26282E; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: baseline"><span class="gtx" aria-hidden="true" style="font-size: 14px; font-weight: 600">01</span><span style="font-size: 15px"><strong style="font-weight: 500">Send the form.</strong> <span style="color: #9A9CA5">Tell us what you need to report on and who will use it.</span></span></li><li class="row" style="margin: 0 -8px; padding: 16px 8px; border-top: 1px solid #26282E; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: baseline"><span class="gtx" aria-hidden="true" style="font-size: 14px; font-weight: 600">02</span><span style="font-size: 15px"><strong style="font-weight: 500">See it on a call.</strong> <span style="color: #9A9CA5">We walk through the platform and the areas that fit your business.</span></span></li><li class="row" style="margin: 0 -8px; padding: 16px 8px; border-top: 1px solid #26282E; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: baseline"><span class="gtx" aria-hidden="true" style="font-size: 14px; font-weight: 600">03</span><span style="font-size: 15px"><strong style="font-weight: 500">Get a proposal.</strong> <span style="color: #9A9CA5">A package and price sized to your teams, workspaces and connections.</span></span></li></ol>
 </div>
 <div style="background: #121316; border: 1px solid #26282E; border-radius: 16px; padding: clamp(20px, 3vw, 36px); box-sizing: border-box">
 <sc-if value="{{closed}}" hint-placeholder-val="{{false}}">
 <div role="status" style="display: flex; flex-direction: column; gap: 12px; padding: 32px 0">
 <strong style="font-size: 24px; letter-spacing: -0.02em">{{closedTitle}}</strong>
-<span style="font-size: 16px; color: #9A9CA5">We are not taking requests through the website yet. To talk to us now, call <a href="tel:+971509078947" class="nl" style="color: #F4F5F7">+971 50 907 8947</a>.</span>
+<span style="font-size: 16px; color: #9A9CA5">We are not taking requests through the website yet. To talk to us now, call <a href="tel:+971509078947" class="nl" style="color: #F4F5F7; text-decoration: underline; text-underline-offset: 3px">+971 50 907 8947</a>.</span>
 </div>
 </sc-if>
 <sc-if value="{{sent}}" hint-placeholder-val="{{false}}">
@@ -648,7 +651,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 <details style="border-top: 1px solid #26282E; padding: 4px 0"><summary style="cursor: pointer; min-height: 52px; display: flex; align-items: center; font-size: 17px; font-weight: 500">Does AnchorIQ change records in our CRM?</summary><p style="margin: 0 0 18px; font-size: 15px; color: #9A9CA5">No. AnchorIQ is reporting only by default. Writing stages or notes back to the CRM is planned as a setting you choose to turn on.</p></details>
 <details style="border-top: 1px solid #26282E; padding: 4px 0"><summary style="cursor: pointer; min-height: 52px; display: flex; align-items: center; font-size: 17px; font-weight: 500">Who can see what?</summary><p style="margin: 0 0 18px; font-size: 15px; color: #9A9CA5">Access follows role: agent, team leader, manager and management. Each role sees a different home screen and a different scope of leads, and you can rename the roles to match your organisation.</p></details>
 <details style="border-top: 1px solid #26282E; padding: 4px 0"><summary style="cursor: pointer; min-height: 52px; display: flex; align-items: center; font-size: 17px; font-weight: 500">Are the screens on this page real data?</summary><p style="margin: 0 0 18px; font-size: 15px; color: #9A9CA5">No. The dashboard screens and every chart on this page use sample data. Nothing here comes from a customer account.</p></details>
-<details style="border-top: 1px solid #26282E; border-bottom: 1px solid #26282E; padding: 4px 0"><summary style="cursor: pointer; min-height: 52px; display: flex; align-items: center; font-size: 17px; font-weight: 500">How is pricing set?</summary><p style="margin: 0 0 18px; font-size: 15px; color: #9A9CA5">By the size of your teams and the modules and connections you need. Book a demo and we will send a tailored proposal.</p></details>
+<details style="border-top: 1px solid #26282E; border-bottom: 1px solid #26282E; padding: 4px 0"><summary style="cursor: pointer; min-height: 52px; display: flex; align-items: center; font-size: 17px; font-weight: 500">How is pricing set?</summary><p style="margin: 0 0 18px; font-size: 15px; color: #9A9CA5">By the size of your teams and the modules and connections you need. Once demo requests open, we will send a tailored proposal.</p></details>
 </div>
 </div>
 </section>
@@ -661,7 +664,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 
 <div style="position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px">
 <h2 data-rv="1" style="margin: 0; max-width: 720px; font-size: clamp(34px, 4.6vw, 60px); line-height: 1.04; letter-spacing: -0.035em; font-weight: 600; text-wrap: balance">See your own numbers in one view.</h2>
-<a href="#pricing" class="btn ctab" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 17px; font-weight: 600; text-decoration: none">Book a demo<span class="arr" aria-hidden="true">&rarr;</span></a>
+<a href="#pricing" class="btn ctab" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 17px; font-weight: 600; text-decoration: none">Demos open soon<span class="arr" aria-hidden="true">&rarr;</span></a>
 </div>
 </div></section>
 
@@ -680,14 +683,14 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 </div>
 <div style="max-width: 1760px; margin: 0 auto; padding: 20px clamp(24px, 5vw, 96px) 40px; box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 13px; color: #9A9CA5; border-top: 1px solid #26282E">
 <span>© 2026 Anchor Digital. All rights reserved.</span>
-<span style="display: flex; flex-wrap: wrap; gap: 8px 24px"><a class="nl" href="Privacy.dc.html">Privacy Policy</a><a class="nl" href="Terms.dc.html">Terms of Service</a><a class="nl" href="tel:+971509078947">+971 50 907 8947</a></span>
+<span style="display: flex; flex-wrap: wrap; gap: 8px 24px"><a class="nl" href="tel:+971509078947">+971 50 907 8947</a></span>
 </div>
 </footer>
 
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":23600}}'>
-const TOUR = [["Business data is everywhere", "", "", "Ad platforms, a CRM, portals and spreadsheets each tell part of the story."], ["Meet AnchorIQ", "assets/demo/home.jpg", "AnchorIQ Home screen, sample data", "One home screen for each role, starting with business results."], ["One connected view", "assets/demo/overview.jpg", "AnchorIQ Overview screen, sample data", "Total leads, the qualified share and a tile for every stage."], ["Understand every lead", "assets/demo/all-leads.jpg", "AnchorIQ All leads screen, sample data", "Search any lead and see the stage it came from and the stage it is in."], ["Measure what matters", "assets/demo/campaigns.jpg", "AnchorIQ Campaigns screen, sample data", "Campaigns judged by qualified leads and wins, not by clicks."], ["Manage teams and operations", "assets/demo/my-day.jpg", "AnchorIQ My day screen, sample data", "A daily queue where every lead has a score and a reason."], ["Make better decisions", "assets/demo/executive-summary.jpg", "AnchorIQ Executive summary screen, sample data", "Headline KPIs and the key changes, written as sentences."], ["Book a demo", "", "", "See it on a call, with your own questions."]];
+const TOUR = [["Business data is everywhere", "", "", "Ad platforms, a CRM, portals and spreadsheets each tell part of the story."], ["Meet AnchorIQ", "assets/demo/home.jpg", "AnchorIQ Home screen, sample data", "One home screen for each role, starting with business results."], ["One connected view", "assets/demo/overview.jpg", "AnchorIQ Overview screen, sample data", "Total leads, the qualified share and a tile for every stage."], ["Understand every lead", "assets/demo/all-leads.jpg", "AnchorIQ All leads screen, sample data", "Search any lead and see the stage it came from and the stage it is in."], ["Measure what matters", "assets/demo/campaigns.jpg", "AnchorIQ Campaigns screen, sample data", "Campaigns judged by qualified leads and wins, not by clicks."], ["Manage teams and operations", "assets/demo/my-day.jpg", "AnchorIQ My day screen, sample data", "A daily queue where every lead has a score and a reason."], ["Make better decisions", "assets/demo/executive-summary.jpg", "AnchorIQ Executive summary screen, sample data", "Headline KPIs and the key changes, written as sentences."], ["Demos open soon", "", "", "See it on a call, with your own questions, once requests open."]];
 // Same-origin form handler (server/forms.mjs): POST /api/forms/demo or /api/forms/waitlist. Success is shown only after a 2xx, which the handler sends once the enquiry is stored.
 // Enquiries are open only when assets/site-config.js says so (tools/enquiries-mode.py); the server has its own switch (FORMS_OPEN).
 const OPEN = window.AIQ_ENQUIRIES_OPEN === true;
