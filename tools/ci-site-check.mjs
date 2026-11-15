@@ -83,12 +83,12 @@ for (const f of pages) {
 }
 
 // 6. Policy text
-const published = ['Privacy.dc.html', 'Terms.dc.html'].filter((f) => existsSync(f));
+const published = ['Privacy.dc.html', 'Terms.dc.html', 'Notice.dc.html'].filter((f) => existsSync(f));
 const fields = [...new Set(published.flatMap((f) => [...read(f).matchAll(/\[(?:[A-Z][A-Z ]+|CONFIRM:[^\]]+)\]/g)].map((m) => m[0])))];
 if (fields.length) (release ? fail : (m) => notes.push(m))(`unfinished policy text on public pages (${fields.length}): ${fields.join(' | ')}`);
 if (open && !existsSync('Privacy.dc.html')) fail('enquiries are open but no Privacy page is published (tools/policy-pages.py publish)');
-if (!published.length) notes.push('policy pages unpublished (drafts in legal/drafts/)');
-for (const f of pages) if (/<a [^>]*href="(Privacy|Terms)\.dc\.html/.test(read(f)) && !published.length) fail(`${f}: links to an unpublished policy page`);
+if (!existsSync('Privacy.dc.html')) notes.push(`policy pages unpublished (drafts in legal/drafts/); public: ${published.join(', ') || 'none'}`);
+for (const f of pages) for (const m of read(f).matchAll(/<a [^>]*href="((?:Privacy|Terms|Notice)\.dc\.html)/g)) if (!existsSync(m[1])) fail(`${f}: links to unpublished ${m[1]}`);
 
 console.log(`checked ${pages.length} pages, ${links} links, ${assets} asset references, ${sitemap.length} sitemap URLs`);
 for (const n of notes) console.log('note: ' + n);

@@ -12,7 +12,7 @@ Tested locally with `sh deploy/test/run.sh`: 36 checks; the same test runs in CI
 | Setting | Value | Where |
 |---|---|---|
 | Who can read enquiries | **Owner only**, over the existing key-only root SSH (`ssh anchoriq-vps`). There is no web page, API or export endpoint for enquiries. | Docker volume `anchoriq_website_enquiries` (root-only on the host); project directory `chmod 700`, owned by root. The `deploy` and `agents` users get no access. |
-| Demo and waitlist submissions | **Open.** Saved, and emailed to hello@anchordigi.com. To close them later: `FORMS_OPEN: '0'` plus `python3 tools/enquiries-mode.py closed` (keep both the same). | `FORMS_OPEN: '1'` in `deploy/compose.yaml`; browser switch `assets/site-config.js` |
+| Demo and waitlist submissions | **Closed** (marketing-only release): every POST answers 503 and nothing is stored. To open later: fill the policy fields, `python3 tools/policy-pages.py publish`, `python3 tools/enquiries-mode.py open`, `FORMS_OPEN: '1'`. | `FORMS_OPEN: '0'` in `deploy/compose.yaml`; browser switch `assets/site-config.js` |
 | Email notifications | **On**, through the existing Hostinger Email (`smtp.hostinger.com:465`, mailbox hello@anchordigi.com, DKIM already set up; no DNS change). Subjects "AnchorIQ — New demo request" / "AnchorIQ — New trial waitlist signup", Reply-To the visitor. A failed email keeps the enquiry and is listed by `enquiries.mjs unnotified` and in the daily job's journal; `notify-retry` resends. Inbox delivery of both subjects confirmed by the owner on 15 Nov. | `./secrets/smtp.env` (root, 600, never in Git); `forms` on `[internal, egress]` for SMTP only |
 | Google Tag Manager / analytics | **Off.** No tag in any page, and the CSP blocks third-party scripts. | `deploy/csp.conf` (`script-src 'self'`) |
 | Enquiry retention | **365 days** (12 months) after sending, then deleted | `deploy/retention.env` → `ENQUIRY_RETENTION_DAYS=365` |
@@ -42,7 +42,7 @@ Tested locally with `sh deploy/test/run.sh`: 36 checks; the same test runs in CI
 | `anchoriq.io` A | 189.72.152.35 | none |
 | `www.anchoriq.io` CNAME | anchoriq.io | none |
 | `app.anchoriq.io` A | 189.72.152.35 | none (stays closed at the edge) |
-| AAAA | none | none (the edge listens on IPv4 only) |
+| `anchoriq.io` AAAA (and `www` through the CNAME) | 2a02:4780:63:eed2::1, the VPS's own IPv6 address (seen 15 Nov) | see LAUNCH.md: the edge publishes IPv4 only unless IPv6 publishing is added |
 | `anchoriq.io` MX | `10 anchoriq.io` (no mail server runs there) | **owner decision**, not changed by this release |
 | TXT `google-site-verification=…` | none | after launch, only with owner approval |
 
