@@ -41,37 +41,42 @@ if (sitemap.length !== canonSet.size || sitemap.some((u) => !canonSet.has(u))) f
 if (!/Sitemap: https:\/\/anchoriq\.io\/sitemap\.xml/.test(read('robots.txt'))) fail('robots.txt does not point at the sitemap');
 
 // 3. Approved pricing in the source
-const P = read('Pricing.dc.html').match(/const P = (\[\[.*?\]\]);/)?.[1];
+const P = read('assets/pages/Pricing.js').match(/const P = (\[\[.*?\]\]);/)?.[1];
 const want = "[['Starter', 499, 149, 5, 'AED 5,000', ''], ['Professional', 1499, 119, 20, 'AED 8,000', ''], ['Enterprise', 3999, 99, 50, 'quoted separately', 'From ']]";
 if (P !== want) fail(`pricing data changed: ${P}`);
-const pr = read('Pricing.dc.html');
+const pr = read('Pricing.dc.html') + read('assets/pages/Pricing.js');
 for (const s of ["y ? p[1] * 10 : p[1]", "y ? p[2] * 10 : p[2]", '>3 included<', '>5 included<', '>6 included at the starting price, more by quote<', '>AED 5,000<', '>AED 8,000<', '>Quoted separately<'])
   if (!pr.includes(s)) fail(`pricing: missing ${s}`);
 
 // 4. Enquiry mode is consistent: the browser switch and every button label agree
 const open = /AIQ_ENQUIRIES_OPEN = true/.test(read('assets/site-config.js'));
-const all = pages.map(read).join('\n');
+const all = pages.map(read).concat(readdirSync('assets/pages').map((f) => read('assets/pages/' + f))).join('\n');
 const count = (re) => (all.match(re) || []).length;
 const openLabels = count(/>Book a demo</g) + count(/>Join the 7-day trial waitlist</g) + count(/>Talk to sales</g);
 const closedLabels = count(/>Demos open soon</g) + count(/>Demos soon</g) + count(/>Trial waitlist opens soon</g) + count(/>Sales enquiries open soon</g);
 if (open && closedLabels) fail(`enquiries open but ${closedLabels} "opens soon" labels remain`);
 if (!open && openLabels) fail(`enquiries closed but ${openLabels} booking labels remain`);
 notes.push(`enquiry mode: ${open ? 'OPEN' : 'closed'} (${open ? openLabels : closedLabels} labels)`);
-for (const f of ['About.dc.html', 'index.html']) {
+for (const f of ['assets/pages/About.js', 'assets/pages/index.js']) {
   const s = read(f);
   if (!/const OPEN = window\.AIQ_ENQUIRIES_OPEN === true;/.test(s) || !s.includes('if (!OPEN) return;')) fail(`${f}: form does not honour the enquiry switch`);
 }
-for (const [f, ep] of [['About.dc.html', "const FORM_ENDPOINT = '/api/forms/';"], ['index.html', "const FORM_ENDPOINT = '/api/forms/demo';"]])
+for (const [f, ep] of [['assets/pages/About.js', "const FORM_ENDPOINT = '/api/forms/';"], ['assets/pages/index.js', "const FORM_ENDPOINT = '/api/forms/demo';"]])
   if (!read(f).includes(ep)) fail(`${f}: form endpoint changed`);
 
 // 5. Security and content rules
 for (const f of pages) {
   const s = read(f);
   // the enquiry switch must load before the page runtime on every page (a comment mentioning it does not count)
-  if (!/<script src="assets\/site-config\.js"><\/script>\s*<script src="assets\/vendor\/resources\.js"><\/script>\s*<script src="\.\/support\.js"><\/script>/.test(s)) fail(`${f}: site-config.js not loaded before the runtime`);
-  for (const m of s.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*text\/x-dc)[^>]*>/g)) fail(`${f}: inline script ${m[0]}`);
-  // Template event bindings (onclick="{{name}}") are attached by the runtime; any other on*= value would be a real inline handler.
-  for (const m of s.matchAll(/\son[a-z]+="([^"]*)"/gi)) if (!/^\{\{[A-Za-z_$][\w$.]*\}\}$/.test(m[1])) fail(`${f}: inline event handler ${m[0]}`);
+  // the enquiry switch loads before React, the page component and the renderer (assets/page.js, our own code)
+  const name = f === 'Main.dc.html' ? 'index' : f.split('.')[0];
+  if (!/<script src="assets\/site-config\.js"><\/script>\s*<script src="assets\/vendor\/react\.production\.min\.js"><\/script>/.test(s)) fail(`${f}: site-config.js not loaded first`);
+  if (!s.includes(`<script src="assets/pages/${name}.js"></script>\n<script src="assets/page.js"></script>`) || !existsSync(`assets/pages/${name}.js`)) fail(`${f}: page component or renderer missing`);
+  if (/support\.js|<x-dc|text\/x-dc|unsafe-eval/.test(s)) fail(`${f}: design-tool runtime reference`);
+  for (const m of s.matchAll(/<script(?![^>]*\bsrc=)[^>]*>/g)) fail(`${f}: inline script ${m[0]}`);
+  // Event bindings are data-on-<event>="{{name}}"; any on*= attribute would be a real inline handler.
+  for (const m of s.matchAll(/\son[a-z]+="[^"]*"/gi)) fail(`${f}: inline event handler ${m[0]}`);
+  for (const m of s.matchAll(/\sdata-on-[a-z]+="([^"]*)"/g)) if (!/^\{\{[A-Za-z_$][\w$.]*\}\}$/.test(m[1])) fail(`${f}: event binding ${m[0]}`);
   for (const m of s.matchAll(/<(?:script|link|img|video|source|iframe)[^>]+(?:src|href)="(https?:\/\/(?!anchoriq\.io)[^"]+)"/g)) fail(`${f}: third-party resource ${m[1]}`);
   for (const m of s.matchAll(/googletagmanager|unpkg\.com|fonts\.googleapis|GTM-[A-Z0-9]+/g)) fail(`${f}: ${m[0]}`);
   for (const m of s.matchAll(/Dubai|Jumeirah|Goyzer|Property ?Finder|Bayut|Dubizzle|\bMeta\b|Google (?:Ads|Analytics)|TikTok|Snapchat|LinkedIn|WhatsApp|Salesforce|HubSpot|Savills/g)) fail(`${f}: names "${m[0]}"`);

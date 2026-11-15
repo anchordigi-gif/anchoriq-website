@@ -42,7 +42,7 @@ def main(mode):
     assert mode in ('open', 'closed')
     pairs = LABELS.items() if mode == 'closed' else [(c, o) for o, c in LABELS.items()]
     changed = 0
-    for f in sorted(glob.glob('*.html')):
+    for f in sorted(glob.glob('*.html')) + sorted(glob.glob('assets/pages/*.js')):  # templates and page components
         s = open(f).read(); o = s
         for a, b in (SENTENCES.items() if mode == 'closed' else [(c, o) for o, c in SENTENCES.items()]):
             s = s.replace(a, b)

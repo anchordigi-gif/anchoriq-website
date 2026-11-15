@@ -23,13 +23,8 @@ async function page(viewport) {
   p.errors = [];
   p.on('pageerror', (e) => p.errors.push(e.message));
   p.on('response', (r) => { if (r.status() >= 400 && r.url().startsWith(BASE) && !r.url().includes('/api/forms/')) p.errors.push(`HTTP ${r.status()} ${r.url().slice(BASE.length)}`); });
-  // The runtime parses each page template (onclick="{{binding}}" placeholders) with innerHTML; the CSP refuses to compile
-  // those placeholder attributes (script-src-attr) and logs it. They are never code: the static check fails on any
-  // on*= value that is not a {{binding}}. Every other console error, including any other CSP violation, fails.
-  const TEMPLATE_ATTR = /^Executing inline event handler violates the following Content Security Policy directive 'script-src 'self' 'unsafe-eval''/;
-  // Same for SVG attributes in the template (d="{{areaD}}" and the like): rejected only when the value is a {{binding}}.
-  const TEMPLATE_SVG = /^Error: <[a-z]+> attribute [a-z][a-z0-9-]*: Expected [^,]+, "\{\{[A-Za-z_$][\w$.]*\}\}"\.$/;
-  p.on('console', (m) => { if (m.type() === 'error' && !TEMPLATE_ATTR.test(m.text()) && !TEMPLATE_SVG.test(m.text())) p.errors.push(m.text()); });
+  // Every console error fails, including any CSP violation (templates are inert; handlers are data-on-* bindings).
+  p.on('console', (m) => { if (m.type() === 'error') p.errors.push(m.text()); });
   return p;
 }
 

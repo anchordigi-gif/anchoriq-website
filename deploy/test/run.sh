@@ -25,7 +25,7 @@ for p in /LAUNCH.md /server/forms.mjs /deploy/compose.yaml /tools/copy-planned.p
   check "private $p is 404"        "$(code https://anchoriq.io:9443$p)" 404
 done
 hdr=$(curl $H -D - -o /dev/null https://anchoriq.io:9443/)
-check "CSP header"                 "$(echo "$hdr" | grep -ci "^content-security-policy: default-src 'self'; script-src 'self' 'unsafe-eval'")" 1
+check "CSP header"                 "$(echo "$hdr" | grep -ci "^content-security-policy: default-src 'self'; script-src 'self'; style-src")" 1
 check "HSTS header"                "$(echo "$hdr" | grep -ci '^strict-transport-security: max-age=31536000')" 1
 check "www redirects to apex"      "$(curl $H -o /dev/null -w '%{http_code} %{redirect_url}' https://www.anchoriq.io:9443/Pricing.dc.html)" "301 https://anchoriq.io/Pricing.dc.html"
 check "http redirects to https"    "$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -H 'Host: anchoriq.io' http://127.0.0.1:9080/About.dc.html)" "301 https://anchoriq.io/About.dc.html"

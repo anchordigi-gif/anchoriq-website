@@ -5,6 +5,7 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 **Final local QA:** 15 November 2026, on the commit recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
 
 ## Marketing-only public release (15 Nov 2026), supersedes the forms-enabled release below
+**Status:** the runtime blocker is resolved (see "Design-tool runtime removed"). Deployment waits for the owner to approve the privacy notice wording.
 **Why:** the Privacy and Terms pages still have unfinished fields, so the forms stay closed and the drafts are off the public site.
 - **Forms closed in both places:** `assets/site-config.js` says closed (`tools/enquiries-mode.py closed`), and `FORMS_OPEN: '0'` in `deploy/compose.yaml` (every POST answers 503, nothing stored). The stack test checks that the release Compose file ships closed.
 - **Policy drafts unpublished:** `python3 tools/policy-pages.py unpublish` moved `Privacy.dc.html` and `Terms.dc.html` to `legal/drafts/`. That path is not served: nginx allows top-level pages only, and `/legal/...` answers 404. It also removed the footer links, the form sentences and the two sitemap entries. `legal/drafts/policy-links.json` records what was removed. Once the bracketed fields are filled, `python3 tools/policy-pages.py publish` restores all of it exactly; that round trip was tested on a copy. `tools/legal-drafts.py` still writes the drafts in either place.
@@ -48,10 +49,56 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 - This note is a docs-only commit after that. Its own run is recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
 - **Not deployed:** the site is not published, VPS, DNS, MX, GTM and billing are unchanged, and app.anchoriq.io and staging are still private.
 
-### Release blocker: `support.js` redistribution is not confirmed
-`support.js` is the page runtime that the design tool generated ("dc-runtime"). Every page needs it. The file has no licence header, and no published export or redistribution terms were found for it. An unofficial MIT reimplementation exists, but it has no maintenance record, so it does not pass a dependency review. **Do not deploy publicly until one of these is done:**
-1. **Owner confirms** that the design tool's terms allow publishing its exported runtime with the site. Record the source (terms page or written confirmation) here and in `THIRD-PARTY-NOTICES.txt`.
-2. **Or replace the runtime:** precompile the pages to plain HTML and JS so `support.js` is no longer shipped. This is a larger change and needs a full visual regression check against the approved design.
+### Design-tool runtime removed (15 Nov): `support.js` is no longer shipped
+**Licence check:** I found no explicit permission to redistribute the generated runtime.
+- Anthropic's Claude Design help pages ([Get started](https://support.claude.com/en/articles/14604416-get-started-with-claude-design), [Move from standalone Claude Design](https://support.claude.com/en/articles/17440474-move-from-standalone-claude-design-to-claude)) list the export options, including standalone HTML and sending to Netlify or Vercel.
+- None of those pages addresses redistributing `support.js`, and the file itself carries no licence.
+- So the pages were rebuilt so that the runtime is not needed.
+
+**What replaced it:**
+- **Templates:** each page keeps its approved template, now in an inert `<template id="page-template">`. Event bindings are spelled `data-on-<event>="{{fn}}"`.
+- **Page logic:** each page's own logic (the design's component code, unchanged) moved to `assets/pages/<page>.js`.
+- **Renderer:** `assets/page.js` (about 150 lines, written for this site) renders the template with React 18.3.1 (MIT, self-hosted). `support.js` and `assets/vendor/resources.js` are deleted.
+- **CSP:** `'unsafe-eval'` is dropped; it is now `script-src 'self'`.
+- **CI:** it no longer needs to ignore template console errors, and any console error fails.
+
+**Same design, verified:**
+- **Screenshots:** 14 pages × 4 viewports (1440, 1024, 768, 390), full page, reduced motion, canvases masked. 55 of 56 are pixel-identical.
+- **Rendered DOM:** identical on all 14 pages. The only differences are the old runtime's `<span class="sc-interp">` wrappers and `playsinline=""`.
+- **Homepage gauge:** it now shows **"11.8%"**. The old runtime put an HTML `<span>` inside an SVG `<text>`, so browsers drew only "%". This is the one visible change; it matches the template.
+- **Retested:**
+  - keyboard and visible focus;
+  - skip link;
+  - mobile menu, including Escape and rapid taps;
+  - pricing toggle (30 rapid clicks) and calculator;
+  - FAQs and gallery;
+  - video controls;
+  - reduced motion;
+  - the axe audit at 4 viewports;
+  - links and sitemap;
+  - e2e in both enquiry modes, including real submissions in open mode;
+  - the stack test (36/36).
+- **Console errors:** none on any page or viewport. Before the rebuild there were 2,144 (the template placeholders).
+- **Switch round trip:** `enquiries-mode.py` (now also covering `assets/pages/*.js`) and `policy-pages.py` restore the files byte for byte.
+
+### Privacy notice for the request logs (draft, awaiting owner approval)
+**Draft:** `legal/drafts/Notice.dc.html`, titled "Privacy notice". It is not served. It describes:
+- what the request log records: IP address, time, path without query string, status and response time; no user agent, referrer or cookies;
+- the rare crit-level server errors that can include an IP address, kept in a fixed-size rotating log;
+- the purpose (security and operation);
+- 14-day deletion;
+- Hostinger, Mumbai, India;
+- no cookies, tracking or third-party requests;
+- closed forms and the phone contact.
+
+**Publishing it:**
+1. Move it to the site root.
+2. Add a footer link "Privacy notice" and a sitemap entry.
+3. Run the checks.
+4. Run CI on that commit.
+5. Release.
+
+**When the full Privacy policy is published:** retire this notice.
 
 ## Forms-enabled release (16 Nov), now superseded by the marketing-only release above
 - **What changed:** demo requests and 7-day trial waitlist signups are open. They are saved, then emailed to hello@anchordigi.com. The release commit is recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
