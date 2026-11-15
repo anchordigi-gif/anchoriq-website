@@ -1,0 +1,9 @@
+[Unit]
+Description=anchoriq.io certificate renewal (renews only when due) and router reload
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/projects/anchoriq-website
+ExecStart=/bin/sh -c 'docker compose --profile tools run --rm certbot renew --webroot -w /var/www/acme --quiet && docker compose exec -T web nginx -s reload'

@@ -1,4 +1,4 @@
-# Publishing anchoriq.io on the existing Hostinger VPS (prepared, NOT applied)
+# Publishing anchoriq.io on the existing Hostinger VPS (live since 15 Nov 2026)
 
 Target: the VPS that already hosts private staging (Hostinger KVM 4, Mumbai, India; `srv2156868`, 189.72.152.35).
 The website is a separate project. It shares only the edge, which routes TLS by name and holds no keys.
@@ -70,18 +70,18 @@ p=$(printf '%s' "$p" | sed 's/\$/$$/g')   # Compose reads $$ as a literal $
 
 ## Server changes, in order (each needs the owner's approval)
 
-1. **Directory:** `install -d -m 700 -o root -g root /opt/projects/anchoriq-website` and `install -d releases`. The first `deploy/release.sh` uploads the approved commit into `releases/<sha>` and points `./site` at it; copy in `deploy/compose.yaml`, `web.nginx.conf`, `csp.conf`, `page-headers.conf`, `retention.env` and `retention.sh`. Then `install -d -o 101 -g 101 -m 750 logs` (the nginx user), and `mkdir letsencrypt acme-webroot`.
+1. **Directory:** `install -d -m 700 -o root -g root /opt/projects/anchoriq-website` and `install -d releases`. The first `deploy/release.sh` uploads the approved commit into `releases/<sha>` and points `./site` at it; copy in `deploy/compose.yaml`, `web.nginx.conf`, `csp.conf`, `page-headers.conf`, `retention.env` and `retention.sh`. Then `install -d -o 101 -g 101 -m 750 logs` (the nginx user), `install -d -m 700 letsencrypt` and `install -d -m 755 acme-webroot` (nginx workers must read the challenge files during renewals).
 2. **Edge network:** `docker network create --internal --subnet 172.30.22.0/24 --ip-range 172.30.22.128/25 edge_anchoriq_website`
 3. **Edge:** install `deploy/edge.nginx.public-website.conf` as `/opt/platform/edge/nginx.conf` and `deploy/edge.compose.public-website.yaml` as `/opt/platform/edge/compose.yaml`, then run `docker compose up -d` in `/opt/platform/edge`.
 4. **Firewall:** `ufw allow 80/tcp && ufw allow 443/tcp` (today only SSH is open).
-5. **First certificate:** in the project directory, `CERT_EMAIL=<owner address> docker compose --profile tools run --rm certbot-issue` (free Let's Encrypt; HTTP-01 for anchoriq.io and www).
+5. **First certificate:** in the project directory, `printf 'CERT_EMAIL=hello@anchordigi.com\n' > .env` (root, 600; Compose needs it for every command, including `release.sh`), then `docker compose --profile tools run --rm --use-aliases certbot-issue` (free Let's Encrypt; HTTP-01 for anchoriq.io and www). **`--use-aliases` is required**: without it the stand-in has no `anchoriq-website-web` name and the edge answers 502 (seen on 15 Nov).
 6. **Start:** `docker compose up -d`.
    - Check that `curl -sI https://anchoriq.io/` shows the CSP and HSTS headers.
    - Check that `https://www.anchoriq.io/` redirects to the apex.
    - Check that `https://app.anchoriq.io/` does not connect.
 7. **Timers:**
    - Copy `deploy/systemd/anchoriq-website-retention.{service,timer}` to `/etc/systemd/system/`, then run `systemctl enable --now anchoriq-website-retention.timer`.
-   - Add a renewal timer that runs `docker compose --profile tools run --rm certbot renew --webroot -w /var/www/acme && docker compose exec web nginx -s reload` twice a day.
+   - Copy `deploy/systemd/anchoriq-website-cert-renew.{service,timer}` the same way and enable the timer (twice a day; renews only when due, then reloads `web`). Test with `docker compose --profile tools run --rm certbot renew --webroot -w /var/www/acme --dry-run`.
 
 **Rollback:**
 - restore the previous `/opt/platform/edge/nginx.conf` and `compose.yaml`, then run `docker compose up -d` in the edge directory;

@@ -4,8 +4,53 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 **Local preview:** `PORT=8200 STATIC_DIR=. node server/forms.mjs`, then http://127.0.0.1:8200/. The site and the forms are served from one origin with the production CSP.
 **Final local QA:** 15 November 2026, on the commit recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
 
+## LIVE: https://anchoriq.io (15 Nov 2026)
+**Release:**
+- First deployed commit: `9e0f3010e4768effe8ddb43990e43024b5143f70`, with CI run [43715051884](https://github.com/anchordigi-gif/anchoriq-website/actions/runs/43715051884) successful.
+- That commit was released with `deploy/release.sh` after the one-time server setup in `deploy/README.md`.
+- This docs-only follow-up commit is then released the same way. `docs/AnchorIQ_Project_Memory.md` (app repo) records the final deployed SHA and its run.
+
+**Owner approvals (15 Nov):**
+- **Launch:** publish the marketing-only site with www redirecting to the apex.
+- **Notice:** the privacy notice wording, published as `Notice.dc.html` and linked in every footer. The owner signed off on:
+  - Anchor Digital as the named operator, with the registered details to be added later by the owner;
+  - no legal-basis statement for now;
+  - the Mumbai disclosure as sufficient for launch.
+- **IPv6:** serve IPv6 (DNS has an AAAA record for the VPS).
+
+**Verified live:**
+- **HTTPS:** HTTP/2 200 over IPv4 and IPv6, with a Let's Encrypt certificate for anchoriq.io and www.anchoriq.io (expires 13 Feb 2027, renewal timer installed, dry run passed).
+- **Redirects:** `https://www.` and `http://` answer 301 to `https://anchoriq.io/…`.
+- **Headers:** CSP `script-src 'self'`, HSTS, nosniff, referrer and permissions policies.
+- **Pages:** all 14 pages, the assets, `robots.txt` and the sitemap (13 URLs, including the notice) answer 200.
+- **Blocked paths:** Privacy, Terms, `legal/drafts/`, `support.js`, the repo files and `.git` answer 404.
+- **Closed forms:** `POST /api/forms/{demo,waitlist}` answers 503, and health reports `open: false`. The About page has no form fields and shows the closed message.
+- **CI browser check run against the live site:** passed (26 page views, pricing toggle and prices, forms closed). It saw no console errors and no third-party requests. The notice text matches the approved wording, with no brackets.
+- **Rate limit:** still applies per IPv4 client (a 220-request burst got 57 × 429).
+- **Kept private:** app.anchoriq.io gets no connection (80 and 443), port 8443 is closed from outside, and staging works only through the SSH tunnel.
+
+**Server changes (all reversible, see the rollback in `deploy/README.md`):**
+- created `/opt/projects/anchoriq-website`, with `.env` (CERT_EMAIL only);
+- created the network `edge_anchoriq_website`;
+- installed the public edge config (the previous one is kept as `/opt/platform/edge/*.pre-website`);
+- `ufw allow 80,443/tcp`;
+- the certificate;
+- the timers `anchoriq-website-retention` (03:15 UTC daily; first run deleted nothing) and `anchoriq-website-cert-renew`.
+
+**IPv6 note:** IPv6 visitors reach the site through Docker's proxy. Their request-log entries carry the edge's internal 172.19.x address, not theirs, and they are exempt from per-address limits; the edge connection cap still applies.
+
+**Unchanged:**
+- no DNS changes; mail DNS and MX untouched;
+- GTM off;
+- no paid services;
+- no SMTP secret on the server (forms closed).
+
+**Left for the owner:**
+- the registered company name, address and number, for the notice and later the full policies;
+- the remaining policy CONFIRM items before forms open.
+
 ## Marketing-only public release (15 Nov 2026), supersedes the forms-enabled release below
-**Status:** the runtime blocker is resolved (see "Design-tool runtime removed"). Deployment waits for the owner to approve the privacy notice wording.
+**Status:** live (above). The runtime blocker is resolved (see "Design-tool runtime removed").
 **Why:** the Privacy and Terms pages still have unfinished fields, so the forms stay closed and the drafts are off the public site.
 - **Forms closed in both places:** `assets/site-config.js` says closed (`tools/enquiries-mode.py closed`), and `FORMS_OPEN: '0'` in `deploy/compose.yaml` (every POST answers 503, nothing stored). The stack test checks that the release Compose file ships closed.
 - **Policy drafts unpublished:** `python3 tools/policy-pages.py unpublish` moved `Privacy.dc.html` and `Terms.dc.html` to `legal/drafts/`. That path is not served: nginx allows top-level pages only, and `/legal/...` answers 404. It also removed the footer links, the form sentences and the two sitemap entries. `legal/drafts/policy-links.json` records what was removed. Once the bracketed fields are filled, `python3 tools/policy-pages.py publish` restores all of it exactly; that round trip was tested on a copy. `tools/legal-drafts.py` still writes the drafts in either place.
@@ -81,7 +126,7 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 - **Console errors:** none on any page or viewport. Before the rebuild there were 2,144 (the template placeholders).
 - **Switch round trip:** `enquiries-mode.py` (now also covering `assets/pages/*.js`) and `policy-pages.py` restore the files byte for byte.
 
-### Privacy notice for the request logs (draft, awaiting owner approval)
+### Privacy notice for the request logs (approved and published 15 Nov as `Notice.dc.html`)
 **Draft:** `legal/drafts/Notice.dc.html`, titled "Privacy notice". It is not served. It describes:
 - what the request log records: IP address, time, path without query string, status and response time; no user agent, referrer or cookies;
 - the rare crit-level server errors that can include an IP address, kept in a fixed-size rotating log;
