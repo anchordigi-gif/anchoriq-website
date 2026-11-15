@@ -1,0 +1,5 @@
+*.sqlite
+*.sqlite-*
+data/
+deploy/secrets/
+node_modules/

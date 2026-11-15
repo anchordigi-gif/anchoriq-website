@@ -1,0 +1,29 @@
+# Local test overlay: the real compose.yaml + the proposed edge, with the repo checkout as the site and a
+# self-signed certificate in place of Let's Encrypt. Used only by run.sh.
+services:
+  web:
+    volumes:
+      - ..:/srv/site:ro
+      - ./test/letsencrypt:/etc/letsencrypt:ro
+      - ./test/logs:/var/log/website
+  forms:
+    environment:
+      FORMS_OPEN: '1'   # the test exercises the open handler; the release default (closed) is checked separately
+    volumes:
+      - ../server:/srv/site/server:ro
+  edge:
+    image: nginx:1.28.1-alpine@sha256:52e3ada4d978443601f286cc2f9e7b95c82aa3ad5a78ce9c6b94ce00258e68cc
+    ports: ['127.0.0.1:9443:443', '127.0.0.1:9080:80']
+    volumes: ['./edge.nginx.public-website.conf:/etc/nginx/nginx.conf:ro']
+    depends_on: [web]
+    networks:
+      default: {}
+      edge:
+        ipv4_address: 172.30.22.2
+networks:
+  edge:
+    name: aiq_website_test_edge
+    external: false
+    internal: true
+    ipam:
+      config: [{ subnet: 172.30.22.0/24, ip_range: 172.30.22.128/25 }]   # .2 stays free for the edge

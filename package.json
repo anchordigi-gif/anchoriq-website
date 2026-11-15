@@ -1,0 +1,16 @@
+{
+  "name": "anchoriq-website",
+  "private": true,
+  "description": "anchoriq.io marketing site. No runtime dependencies; Playwright is used only by CI browser checks.",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "test": "node --test server/forms.test.mjs",
+    "check:site": "node tools/ci-site-check.mjs",
+    "check:e2e": "sh tools/ci-e2e.sh",
+    "check:stack": "sh deploy/test/run.sh"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
+}

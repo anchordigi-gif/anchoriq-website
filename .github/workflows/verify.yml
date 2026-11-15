@@ -1,0 +1,113 @@
+# Pull-request verification for the anchoriq.io website (and pushes to main). Nothing here deploys or sends real
+# email: the form handler only ever talks to a local Mailpit test server, and no repository secrets are used.
+# A commit is deployable only when every job below passed for that exact SHA (deploy/release.sh checks this).
+name: verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITLEAKS_VERSION: 8.30.1
+  GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+
+jobs:
+  # Static pages, links, pricing, sitemap, unit tests (validation, rate limits, honeypot, retention, email),
+  # then real browsers: every page at 1440 and 390, pricing toggle and calculator, demo and waitlist forms with
+  # delivery to a local test mail server (hello@anchordigi.com, both subjects, Reply-To). The opposite enquiry
+  # mode is checked too, so the open/closed switch keeps working.
+  site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      mailpit:
+        image: axllent/mailpit@sha256:e22dce5b36f93c77082e204a3942fb6b283b7896e057458400a4c88344c3df68 # v1.27.11
+        ports: ['127.0.0.1:1025:1025', '127.0.0.1:8025:8025']
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node (version from .node-version)
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+
+      - name: Unit tests (form handler, retention, email notification)
+        run: node --test server/forms.test.mjs
+
+      - name: Static site checks (links, assets, sitemap, pricing, enquiry mode, CSP rules, content)
+        run: node tools/ci-site-check.mjs
+
+      - name: Install Playwright from the lockfile, and Chromium
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Browser checks with mail delivery (current enquiry mode)
+        env:
+          PLAYWRIGHT_MODULE: ${{ github.workspace }}/node_modules/playwright/index.mjs
+          MAILPIT_SMTP: 127.0.0.1:1025
+          MAILPIT_URL: http://127.0.0.1:8025
+        run: sh tools/ci-e2e.sh
+
+      - name: Browser checks in the opposite enquiry mode (switch round trip)
+        env:
+          PLAYWRIGHT_MODULE: ${{ github.workspace }}/node_modules/playwright/index.mjs
+        run: |
+          copy="$RUNNER_TEMP/other-mode"
+          rsync -a --exclude .git --exclude node_modules ./ "$copy/"
+          cd "$copy"
+          if grep -q 'AIQ_ENQUIRIES_OPEN = true' assets/site-config.js; then other=closed; else other=open; fi
+          python3 tools/enquiries-mode.py "$other"
+          node tools/ci-site-check.mjs
+          sh tools/ci-e2e.sh
+
+  # The proposed VPS stack in Docker: edge (TLS passthrough, PROXY protocol), router (CSP, HSTS, static allowlist,
+  # redirects, rate limits), form handler, retention job (enquiries and request logs), app.anchoriq.io closed.
+  stack:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Docker end-to-end test
+        run: sh deploy/test/run.sh
+
+  # Secrets: full git history and the committable tree (SMTP passwords, keys, tokens).
+  secrets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out (full history)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install Gitleaks (checksum verified)
+        run: |
+          curl -fsSLo /tmp/gitleaks.tgz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  /tmp/gitleaks.tgz" | sha256sum -c -
+          tar -xzf /tmp/gitleaks.tgz -C /tmp gitleaks
+          sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
+      - name: Scan history and tree
+        run: |
+          gitleaks git . --redact --no-banner
+          gitleaks dir . --redact --no-banner
+      - name: No enquiry data or credential files tracked
+        run: |
+          if git ls-files | grep -E '\.sqlite|smtp\.env|smtp-password|secrets/|letsencrypt/|privkey'; then
+            echo "tracked data or credential file"; exit 1; fi

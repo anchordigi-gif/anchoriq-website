@@ -1,0 +1,8 @@
+[Unit]
+Description=anchoriq.io retention: delete old enquiries and request logs
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/projects/anchoriq-website/retention.sh
