@@ -4,6 +4,18 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 **Local preview:** `PORT=8200 STATIC_DIR=. node server/forms.mjs`, then http://127.0.0.1:8200/. The site and the forms are served from one origin with the production CSP.
 **Final local QA:** 15 November 2026, on the commit recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
 
+## Homepage AI Insights section fix (15 Nov 2026), section #ai "This is the panel in the dashboard."
+**Panel restored:** the approved AI insights panel from the original ZIP is back, replacing the phone Insights screenshot (`insights-panel.jpg`, still used on Platform). It is now `assets/demo/ai-insights-panel.jpg`, 784×1920 like the original.
+- **Fictional names:** two lines were re-set in the image's own font (Inter 12/13 px at 2×, calibrated against the original until the re-rendered original wording matched): "Dubai" became "Bayside", and "Meta spend grew" became "Social spend grew". Every other pixel of the original is unchanged.
+- **Layout:** the markup, figure size, column widths and centring are exactly the original's. At 1440 px the figure is 438 px and the copy column 714 px.
+
+**Copy beside the panel:**
+- **Entrance:** same as the original (fade and 24 px rise, once, when 15% of the block is in view).
+- **Trigger:** it now starts from the scroll position (`data-rv-sync`, `initCopySync` in `assets/pages/index.js`) instead of an IntersectionObserver callback, so it keeps pace with the scroll-linked panel.
+- **Jumps:** if you jump past the block, it shows at once.
+- **Rows:** their hover highlight is held off while the page scrolls. The live site lit up rows under a resting pointer on 17 frames of a slow scroll; now it lights none.
+- **Checked:** reduced motion keeps the heading and four lines visible. A frame-by-frame wheel test in Chromium and WebKit at 1440, 1024, 768 and 390 px found no flicker, layout jump, clipping or horizontal overflow.
+
 ## LIVE: https://anchoriq.io (15 Nov 2026)
 **Release:**
 - First deployed commit: `9e0f3010e4768effe8ddb43990e43024b5143f70`, with CI run [43715051884](https://github.com/anchordigi-gif/anchoriq-website/actions/runs/43715051884) successful.

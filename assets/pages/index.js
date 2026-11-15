@@ -30,9 +30,10 @@ class Component extends DCLogic {
     if (this.tourEl && !this.tourOn) { this.tourOn = true; this.tourVis = true; if (this.reduce) this.setState({ tourPlay: false }); if (window.IntersectionObserver) { this.tourVis = false; const io = new IntersectionObserver((es) => { this.tourVis = es[0].isIntersecting; }, { threshold: 0.4 }); io.observe(this.tourEl); this.obs = (this.obs || []).concat([io]); } this.tourStart(); }
     if (this.vidCv && !this.loopOn) { this.loopOn = true; try { this.initLines(); } catch (e) { console.error(e); } }
     if (window.anime && this.root && !this.animeOn) { this.animeOn = true; try { this.initAnime(); } catch (e) { console.error(e); } }
+    if (this.root && !this.copyOn) { this.copyOn = true; try { this.initCopySync(); } catch (e) { console.error(e); } }
     if (!(this.stepsOn && this.heroOn && this.loopOn && this.animeOn) && this.tries++ < 60) this.bootT = setTimeout(this.boot, 150);
   };
-  componentWillUnmount() { this.dead = true; clearInterval(this.tourT); clearTimeout(this.bootT); cancelAnimationFrame(this.raf); cancelAnimationFrame(this.hraf); cancelAnimationFrame(this.lraf); if (this.hren) this.hren.dispose(); (this.obs || []).forEach((o) => o.disconnect()); }
+  componentWillUnmount() { this.dead = true; clearInterval(this.tourT); clearTimeout(this.bootT); cancelAnimationFrame(this.raf); cancelAnimationFrame(this.hraf); cancelAnimationFrame(this.lraf); if (this.hren) this.hren.dispose(); (this.obs || []).forEach((o) => o.disconnect()); if (this.copyOff) this.copyOff(); }
 
   initSteps() {
     const els = Array.prototype.slice.call(this.root.querySelectorAll('[data-step]'));
@@ -214,6 +215,37 @@ class Component extends DCLogic {
     }), { threshold: 0.15 });
     rv.concat(all('[data-anim]')).forEach((el) => io.observe(el));
     this.obs = (this.obs || []).concat([io]);
+  }
+
+  // Section #ai, the copy beside the panel ("This is the panel in the dashboard."). Same entrance as [data-rv]
+  // (fade and 24px rise, once, at the same point: 15% of the block in view), but driven by the scroll position, so it
+  // keeps pace with the scroll-linked panel on fast scrolls; a jump past it shows it at once. While the page scrolls,
+  // the rows' hover highlight is held off so rows passing under a resting pointer do not flicker.
+  initCopySync() {
+    const els = Array.prototype.slice.call(this.root.querySelectorAll('[data-rv-sync]'));
+    if (!els.length) return;
+    const A = window.anime, motion = !!(A && A.animate) && !this.reduce;
+    const pending = motion ? els.filter((el) => el.getBoundingClientRect().top > window.innerHeight) : [];
+    pending.forEach((el) => { el.style.opacity = 0; });
+    let t = 0, raf = 0;
+    const check = () => {
+      raf = 0;
+      for (let i = pending.length - 1; i >= 0; i--) {
+        const el = pending[i], r = el.getBoundingClientRect();
+        if (r.top >= window.innerHeight - r.height * 0.15) continue;
+        pending.splice(i, 1);
+        if (r.bottom > 0) A.animate(el, { opacity: [0, 1], translateY: [24, 0], duration: 700, ease: 'outExpo' });
+        else el.style.opacity = 1;
+      }
+    };
+    const onScroll = () => {
+      els.forEach((el) => el.setAttribute('data-scrolling', ''));
+      clearTimeout(t); t = setTimeout(() => els.forEach((el) => el.removeAttribute('data-scrolling')), 160);
+      if (pending.length && !raf) raf = requestAnimationFrame(check);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    this.copyOff = () => { window.removeEventListener('scroll', onScroll); clearTimeout(t); cancelAnimationFrame(raf); };
+    check();
   }
 
   spotMove = (e) => {

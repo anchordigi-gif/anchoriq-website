@@ -34,6 +34,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .ben{transition:border-color .25s ease-out}.ben:hover{border-top-color:#F4F5F7!important}.ben h3,.ben strong{transition:transform .25s ease-out}.ben:hover h3,.ben:hover strong{transform:translateX(4px)}
 .lnk svg{transition:transform .2s ease-out}.lnk:hover svg{transform:translateX(4px)}
 .row{transition:background-color .2s ease-out}.row:hover{background-color:rgba(244,245,247,.04)}
+[data-rv-sync][data-scrolling] .row{background-color:transparent;transition:none}
 details summary{list-style:none;justify-content:space-between;transition:color .2s ease-out;color:#C9CBD2}details summary::-webkit-details-marker{display:none}details summary:hover{color:#F4F5F7}
 details summary::after{content:"+";font-size:20px;font-weight:400;color:#9A9CA5;transition:transform .25s ease-out}details[open] summary::after{transform:rotate(45deg)}
 .fx input,.fx select,.fx textarea{transition:border-color .2s ease-out,background-color .2s ease-out}.fx input:hover,.fx select:hover,.fx textarea:hover{border-color:#9A9CA5!important}
@@ -498,9 +499,9 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 </div>
 <div class="split" style="margin-top: 120px; align-items: center">
 <figure class="sv-rise" style="margin: 0; justify-self: center; width: 100%; max-width: 420px; padding: 8px; border-radius: 16px; border: 1px solid rgba(244,245,247,0.12); background: rgba(244,245,247,0.04)">
-<img src="assets/demo/insights-panel.jpg" width="784" height="1920" loading="lazy" alt="The AnchorIQ Insights page on a phone, showing an AI summary, anomaly alerts and follow-up priorities, with fictional demo data" style="display: block; width: 100%; height: auto; border-radius: 10px">
+<img src="assets/demo/ai-insights-panel.jpg" width="784" height="1920" loading="lazy" alt="The AI insights panel in the AnchorIQ dashboard, showing an explained KPI change, the figures it is based on, an action button, the Insights, Ask and Comments tabs and the Ask bar, with fictional demo data" style="display: block; width: 100%; height: auto; border-radius: 10px">
 </figure>
-<div data-rv="1" style="display: flex; flex-direction: column; gap: 4px">
+<div data-rv-sync="1" style="display: flex; flex-direction: column; gap: 4px">
 <h3 style="margin: 0 0 20px; font-size: clamp(24px, 2.4vw, 34px); line-height: 1.15; letter-spacing: -0.02em; font-weight: 500">This is the panel in the dashboard.</h3>
 <p class="row" style="margin: 0 -8px; padding: 18px 8px; border-top: 1px solid #26282E; font-size: 17px">It opens beside any page and follows the filters you already have on.</p>
 <p class="row" style="margin: 0 -8px; padding: 18px 8px; border-top: 1px solid #26282E; font-size: 17px">Three jobs sit at the top: explain a KPI change, find neglected leads, summarise campaign quality.</p>
