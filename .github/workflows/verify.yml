@@ -69,7 +69,11 @@ jobs:
           rsync -a --exclude .git --exclude node_modules ./ "$copy/"
           cd "$copy"
           if grep -q 'AIQ_ENQUIRIES_OPEN = true' assets/site-config.js; then other=closed; else other=open; fi
+          # open forms need the published policy pages, as in the owner's opening procedure (LAUNCH.md):
+          # publish them before switching, so their buttons switch too
+          if [ "$other" = open ] && [ -d legal/drafts ]; then python3 tools/policy-pages.py publish; fi
           python3 tools/enquiries-mode.py "$other"
+          if [ "$other" = closed ] && [ ! -d legal/drafts ]; then python3 tools/policy-pages.py unpublish; fi
           node tools/ci-site-check.mjs
           sh tools/ci-e2e.sh
 
