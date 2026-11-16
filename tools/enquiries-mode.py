@@ -37,6 +37,8 @@ SENTENCES = {
 }
 
 HEADER = r'(<a [^>]*class="btn"[^>]*min-height: 40px;[^>]*>)'
+# the homepage hero button's short phone label (shown under 520px)
+HERO_SM = r'(<span class="bt-sm">)'
 
 def main(mode):
     assert mode in ('open', 'closed')
@@ -48,12 +50,14 @@ def main(mode):
             s = s.replace(a, b)
         if mode == 'open':
             s = re.sub(HEADER + 'Demos soon(?=<)', r'\1Book a demo', s)
+            s = re.sub(HERO_SM + 'Demos soon(?=<)', r'\1Book a demo', s)
         for a, b in pairs:
             # only element text: ">Label<" (with or without a following arrow span)
             s = re.sub(r'>' + re.escape(a) + r'(?=<)', '>' + b, s)
         if mode == 'closed':
             # the header button (the only 40px .btn) has room for ~11 characters on a 360 px phone
             s = re.sub(HEADER + 'Demos open soon(?=<)', r'\1Demos soon', s)
+            s = re.sub(HERO_SM + 'Demos open soon(?=<)', r'\1Demos soon', s)
         if s != o:
             open(f, 'w').write(s); changed += 1
     open('assets/site-config.js', 'w').write(

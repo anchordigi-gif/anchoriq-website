@@ -154,6 +154,9 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 @media (max-width:900px){footer a{min-height:44px!important}header nav a.btn{min-height:44px!important}main button{min-height:44px}main button.tab{min-width:44px}.tapx{min-height:44px;display:inline-flex!important;align-items:center}.cmp>summary small{display:none}}
 @media (max-width:520px){.prow{flex-direction:column;gap:4px!important}.prow strong{max-width:none!important;text-align:left!important}}
 /*qaend*/
+
+.bt-sm{display:none}
+@media (max-width:520px){#top .bt-lg{display:none}#top .bt-sm{display:inline}}
 </style>
 </helmet>
 <div data-tone="1" data-sz="1" ref="{{setRoot}}" style="position: relative; font-family: Inter, Arial, system-ui, sans-serif; color: #F4F5F7; background: #0A0B0D; font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow: clip">
@@ -168,7 +171,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 
 <header style="position: sticky; top: 0; z-index: 40; background: rgba(10,11,13,0.72); -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid rgba(244,245,247,0.08)">
 <nav aria-label="Main" style="max-width: 1760px; margin: 0 auto; padding: 0 clamp(24px, 5vw, 96px); min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 24px; box-sizing: border-box">
-<a href="#top" style="display: flex; align-items: center; min-height: 44px"><img src="assets/e9598977a3f50d8f77108e95a34f3787.png" width="960" height="162" alt="AnchorIQ" style="display: block; width: 160px; height: auto"></a>
+<a href="#top" style="display: flex; align-items: center; min-height: 44px"><img src="assets/e9598977a3f50d8f77108e95a34f3787.png" width="960" height="162" alt="AnchorIQ" style="display: block; width: 148px; height: auto"></a>
 <div class="nav-links" style="align-items: center; gap: 30px; font-size: 13px; font-weight: 500">
 <a class="nl" href="Platform.dc.html">Platform</a>
 <a class="nl" href="Solutions.dc.html">Solutions</a>
@@ -191,7 +194,7 @@ footer{padding-bottom:env(safe-area-inset-bottom)}
 <span style="display: block; font-weight: 300; color: #F4F5F7; margin-top: -0.12em"><span class="w" style="display: inline-block; padding-bottom: 0.12em">One</span> <span class="w flow" style="display: inline-block; --p: 42%; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; background-image: linear-gradient(90deg, #7C5CFF 0%, #B45CFF 22%, #E028DF 45%, #FF8BE0 60%, #E028DF 78%, #7C5CFF 100%); background-size: 320% 100%; background-position: 42% 0; -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 0.12em">intelligent</span> <span class="w" style="display: inline-block; padding-bottom: 0.12em">view.</span></span>
 </h1>
 <div style="margin-top: 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
-<a href="#pricing" class="btn" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 15px; font-weight: 600; text-decoration: none">Demos open soon</a>
+<a href="#pricing" class="btn" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 8px; background: #F4F5F7; color: #0A0B0D; font-size: 15px; font-weight: 600; text-decoration: none"><span class="bt-lg">Demos open soon</span><span class="bt-sm">Demos soon</span></a>
 <a href="#journey" class="nl lnk" style="font-size: 15px; font-weight: 500; min-height: 52px; display: inline-flex; align-items: center; gap: 8px; color: #F4F5F7">Explore the platform <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5"></path></svg></a>
 </div>
 </div>
