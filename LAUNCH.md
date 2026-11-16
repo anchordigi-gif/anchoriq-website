@@ -11,7 +11,8 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 - **Check:** the computed typography of every element with the same text matches the new export on 11 of 12 shared pages. The homepage differs only where intended.
 
 **Homepage hero:** "Your entire BUSINESS." / "One INTELLIGENT view.", with light text, bold uppercase gradient words, the dotted wave and buttons in one row.
-- **Kept from the approved design:** the hero paragraph (19–23 px), which the export had moved and shrunk, and the closed "Demos open soon" button.
+- **Matched to the owner's reference** (`image(20261116-063358).png`, 16 Nov), captured at a 1470×717 viewport and 1.36× scale. The hero has no paragraph, so the paragraph sits under the next heading, as in the export, at its approved 19–23 px. Headline rows and buttons match the reference within 2 image pixels.
+- **Left as is:** the logo (160 px, per the owner's spec; the reference shows 148) and the closed "Demos open soon" / "Demos soon" labels. The wave is the same code at a different moment.
 
 **Owner type targets, checked in the browser on all pages at 1440, 1024, 768, 390 and 360 px:**
 - **Inner-page h1:** 68 px at 1440. The export's 28 px phone minimum is kept.
