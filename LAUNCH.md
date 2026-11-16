@@ -4,6 +4,30 @@ Static marketing site with its own form handler, separate from app.anchoriq.io (
 **Local preview:** `PORT=8200 STATIC_DIR=. node server/forms.mjs`, then http://127.0.0.1:8200/. The site and the forms are served from one origin with the production CSP.
 **Final local QA:** 15 November 2026, on the commit recorded in `docs/AnchorIQ_Project_Memory.md` (app repo).
 
+## Type scale, hero and logo update (16 Nov 2026), awaiting owner approval before release
+**Source:** the owner's new design-tool export (`~/Downloads/anchoriq-website.zip`, built 16 Nov). It was used as a reference only: its `support.js` is not used, and the current renderer, release process, privacy notice and closed forms are kept.
+
+**How it was applied:** every line the export changed (old export to new) was ported onto the current templates where that line still existed. If our text had changed since, only the changed opening tag was ported. Replacements were simultaneous, with no chained edits.
+- **Check:** the computed typography of every element with the same text matches the new export on 11 of 12 shared pages. The homepage differs only where intended.
+
+**Homepage hero:** "Your entire BUSINESS." / "One INTELLIGENT view.", with light text, bold uppercase gradient words, the dotted wave and buttons in one row.
+- **Kept from the approved design:** the hero paragraph (19–23 px), which the export had moved and shrunk, and the closed "Demos open soon" button.
+
+**Owner type targets, checked in the browser on all pages at 1440, 1024, 768, 390 and 360 px:**
+- **Inner-page h1:** 68 px at 1440. The export's 28 px phone minimum is kept.
+- **h2:** at most 34 px. The export only capped homepage headings; inner pages had 44 px.
+- **h3:** 18–24 px. The export had 16 and 29 px.
+- **Inner-page intro:** 16 px.
+- **Text:** body 14–15 px; nothing visible under 13 px (the homepage chart's 12 px labels became 13 px).
+- **Inputs:** 16 px.
+- **Logo:** 160 px desktop, 128 px at 520 px and narrower, 190 px footer, all from the existing 960×162 PNG.
+- **Layout:** no horizontal overflow and no header overlap at any of those widths.
+
+**Hero checks:**
+- Each headline line stays on one row at 1024–1920 px.
+- Fully legible with reduced motion, and with WebGL off (the fallback image shows).
+- "Explore the platform" still jumps to `#journey`.
+
 ## Homepage AI Insights section fix (15 Nov 2026), section #ai "This is the panel in the dashboard."
 **Panel restored:** the approved AI insights panel from the original ZIP is back, replacing the phone Insights screenshot (`insights-panel.jpg`, still used on Platform). It is now `assets/demo/ai-insights-panel.jpg`, 784×1920 like the original.
 - **Fictional names:** two lines were re-set in the image's own font (Inter 12/13 px at 2×, calibrated against the original until the re-rendered original wording matched): "Dubai" became "Bayside", and "Meta spend grew" became "Social spend grew". Every other pixel of the original is unchanged.
